@@ -1,0 +1,13 @@
+/home/aesthetic/SIH/admin_rag.py:100: LangChainDeprecationWarning: The class `Ollama` was deprecated in LangChain 0.3.1 and will be removed in 1.0.0. An updated version of the class exists in the :class:`~langchain-ollama package and should be used instead. To use it run `pip install -U :class:`~langchain-ollama` and import as `from :class:`~langchain_ollama import OllamaLLM``.
+  llm = Ollama(model="llama3.1:8b")
+/home/aesthetic/SIH/admin_rag.py:168: UserWarning: You have not specified a value for the `type` parameter. Defaulting to the 'tuples' format for chatbot messages, but this is deprecated and will be removed in a future version of Gradio. Please set type='messages' instead, which uses openai-style dictionaries with 'role' and 'content' keys.
+  chatbot = gr.Chatbot(label="Chat with CampusSathi", height=500)
+Traceback (most recent call last):
+  File "/home/aesthetic/SIH/admin_rag.py", line 327, in <module>
+    demo.launch(server_name="0.0.0.0", server_port=7860)
+  File "/home/aesthetic/.local/lib/python3.12/site-packages/gradio/blocks.py", line 2635, in launch
+    ) = http_server.start_server(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/aesthetic/.local/lib/python3.12/site-packages/gradio/http_server.py", line 157, in start_server
+    raise OSError(
+OSError: Cannot find empty port in range: 7860-7860. You can specify a different port by setting the GRADIO_SERVER_PORT environment variable or passing the `server_port` parameter to `launch()`.
