@@ -14,8 +14,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Force light theme override */
+    --background: #ffffff;
+    --foreground: #171717;
   }
 }
 
@@ -23,4 +24,30 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Removed body/main decorative backgrounds to avoid duplicates */
+
+/* Sidebar vertical art background */
+.sidebar-bg {
+  /* Base color */
+  background-color: #0b3c66;
+  /* 50% fade overlay + image */
+  background-image: linear-gradient(rgba(11,60,102,0.5), rgba(11,60,102,0.5)), url('/bg1.png');
+  background-repeat: no-repeat, no-repeat;
+  background-position: center center, center center; /* center the image inside sidebar */
+  /* Overlay covers fully; image fits without cropping */
+  background-size: cover, contain;
+}
+
+/* Header gradient */
+.header-gradient {
+  background: linear-gradient(90deg, rgb(193, 57, 138) 0%, rgb(32, 188, 130) 50%, rgb(193, 57, 138) 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Footer background */
+.footer-bg {
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
 }

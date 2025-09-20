@@ -6,7 +6,7 @@ from pydantic import BaseModel
 import uvicorn
 
 # Reuse existing app logic
-from admin_rag import init_db, initialize_rag_chain, campus_sathi_router, rag_chain
+import admin_rag
 
 
 class ChatRequest(BaseModel):
@@ -43,7 +43,7 @@ def build_app() -> FastAPI:
     @app.get("/status")
     def status():  # type: ignore[no-redef]
         return {
-            "kb_ready": bool(rag_chain),
+            "kb_ready": bool(admin_rag.rag_chain),
         }
 
     @app.post("/chat", response_model=ChatResponse)
@@ -52,7 +52,7 @@ def build_app() -> FastAPI:
         if req.language:
             # Nudge LLM to reply in selected language
             msg = f"Please answer in {req.language}. " + msg
-        reply = campus_sathi_router(msg, req.uid)
+        reply = admin_rag.campus_sathi_router(msg, req.uid)
         return ChatResponse(reply=reply)
 
     return app
@@ -63,8 +63,8 @@ app = build_app()
 
 if __name__ == "__main__":
     # Ensure DB exists; warm RAG in background (lazy init)
-    init_db()
-    threading.Thread(target=initialize_rag_chain, daemon=True).start()
+    admin_rag.init_db()
+    threading.Thread(target=admin_rag.initialize_rag_chain, daemon=True).start()
 
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "8000"))
