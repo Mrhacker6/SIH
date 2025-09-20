@@ -430,7 +430,7 @@ export default function Home() {
          <div className="flex items-center space-x-4">
            <span>© 2024 CampusSathi. All rights reserved.</span>
            <span>•</span>
-           <span>Built with ❤️ for students</span>
+           <span>Built By Team Config ❤️ for students</span>
          </div>
          <div className="flex items-center space-x-4 mt-2 md:mt-0">
            <span>Powered by AI</span>
@@ -440,7 +440,6 @@ export default function Home() {
            <a href="#" className="hover:text-orange-400 transition-colors">Privacy Policy</a>
          </div>
        </div>
-     </div>
      </div>
      </div>
    </div>

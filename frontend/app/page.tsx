@@ -106,6 +106,18 @@ const translations: Record<string, any> = {
   },
 };
 
+// Latest updates data
+const latestUpdates = [
+  { title: "Scholarship Applications Open", description: "Apply for merit-based scholarships now", icon: "🎓" },
+  { title: "Exam Schedule Released", description: "Check your semester exam dates", icon: "📅" },
+  { title: "Library Extended Hours", description: "24/7 access during exam period", icon: "📚" },
+  { title: "Hostel Fee Payment Due", description: "Submit your accommodation fees", icon: "🏠" },
+  { title: "Career Fair 2024", description: "Meet top recruiters on campus", icon: "💼" },
+  { title: "Sports Week Registration", description: "Sign up for inter-college competitions", icon: "⚽" },
+  { title: "Research Paper Submission", description: "Submit your research work by month-end", icon: "📝" },
+  { title: "Alumni Meet 2024", description: "Connect with successful graduates", icon: "👥" }
+];
+
 export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -113,6 +125,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [kbReady, setKbReady] = useState<boolean | null>(null);
   const [language, setLanguage] = useState<string>("English");
+  const [currentUpdateIndex, setCurrentUpdateIndex] = useState(0);
 
   // Initialize greeting based on selected language
   useEffect(() => {
@@ -173,12 +186,22 @@ export default function Home() {
     setMessages([{ role: "assistant", content: translations[language].greeting }]);
   }, [language]);
 
+  // Rotate latest updates every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentUpdateIndex((prevIndex) => 
+        (prevIndex + 1) % latestUpdates.length
+      );
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="header-gradient px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <img src="/state-logo.png" alt="State Logo" className="h-16 w-16 object-contain" />
           <span className="text-white font-semibold text-xl">{translations[language].appName}</span>
         </div>
         <div className="text-white/90 text-sm">
@@ -207,21 +230,45 @@ export default function Home() {
       </aside>
 
       <main className="p-4 overflow-y-auto bg-slate-100">
-        <div className="bg-white rounded-xl shadow p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="text-slate-800 font-semibold flex-1">{translations[language].headerTitle}</div>
+        <div className="bg-white rounded-xl shadow p-4 relative overflow-hidden">
+          {/* Chat Background Wallpaper */}
+          <div className="absolute inset-0 opacity-100 z-0">
+            <img 
+              src="/bg1.png" 
+              alt="Chat Background" 
+              className="w-full h-full object-cover"
+            />
+            {/* Dark overlay for better text readability */}
+            <div className="absolute inset-0 bg-black/20"></div>
+          </div>
+          <div className="flex items-center gap-3 mb-3 relative z-10">
+            <div 
+              className="text-white font-semibold flex-1 text-lg"
+              style={{textShadow: "0 2px 4px rgba(0,0,0,0.5)"}}
+            >
+              {translations[language].headerTitle}
+            </div>
             {kbReady === null && (
-              <span className="text-xs bg-slate-100 text-slate-700 border border-slate-300 rounded-full px-2 py-1">
+              <span 
+                className="text-xs bg-white/90 text-slate-700 border border-slate-300 rounded-full px-3 py-1.5 shadow-lg backdrop-blur-sm"
+                style={{textShadow: "0 1px 2px rgba(0,0,0,0.1)"}}
+              >
                 {translations[language].kbChecking}
               </span>
             )}
             {kbReady === false && (
-              <span className="text-xs bg-yellow-100 text-yellow-900 border border-yellow-300 rounded-full px-2 py-1">
+              <span 
+                className="text-xs bg-yellow-100/90 text-yellow-900 border border-yellow-300 rounded-full px-3 py-1.5 shadow-lg backdrop-blur-sm"
+                style={{textShadow: "0 1px 2px rgba(0,0,0,0.1)"}}
+              >
                 {translations[language].kbWarming}
               </span>
             )}
             {kbReady === true && (
-              <span className="text-xs bg-green-100 text-green-900 border border-green-300 rounded-full px-2 py-1">
+              <span 
+                className="text-xs bg-green-100/90 text-green-900 border border-green-300 rounded-full px-3 py-1.5 shadow-lg backdrop-blur-sm"
+                style={{textShadow: "0 1px 2px rgba(0,0,0,0.1)"}}
+              >
                 {translations[language].kbReady}
               </span>
             )}
@@ -229,57 +276,98 @@ export default function Home() {
               value={uid}
               onChange={(e) => setUid(e.target.value)}
               placeholder={translations[language].uidPlaceholder}
-              className="rounded border border-slate-300 px-2 py-1 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white/90 backdrop-blur-sm shadow-lg"
+              style={{textShadow: "0 1px 2px rgba(0,0,0,0.1)"}}
             />
           </div>
 
-          <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
+          <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1 relative z-10">
             {messages.map((m, idx) => (
               <div key={idx} className="flex gap-3 items-start">
-                <div
-                  className={`h-8 w-8 rounded-full ${
-                    m.role === "assistant" ? "bg-blue-100" : "bg-slate-200"
-                  }`}
-                />
+                <div className="h-8 w-8 rounded-full flex items-center justify-center overflow-hidden">
+                  {m.role === "assistant" ? (
+                    <img 
+                      src="/icon.png" 
+                      alt="CampusSathi" 
+                      className="h-6 w-6 object-contain"
+                    />
+                  ) : (
+                    <div className="h-8 w-8 bg-slate-200 rounded-full flex items-center justify-center">
+                      <span className="text-slate-600 text-xs font-medium">U</span>
+                    </div>
+                  )}
+                </div>
                 <div
                   className={`${
                     m.role === "assistant"
-                      ? "bg-blue-50 text-slate-900"
-                      : "bg-slate-50 text-slate-900"
-                  } rounded-lg px-3 py-2 shadow border border-slate-200 text-sm w-full leading-relaxed`}
+                      ? "bg-blue-500/90 text-white"
+                      : "bg-white/95 text-slate-900"
+                  } rounded-2xl px-4 py-3 shadow-lg text-sm w-full leading-relaxed backdrop-blur-sm ${
+                    m.role === "assistant" 
+                      ? "ml-8 rounded-bl-md" 
+                      : "mr-8 rounded-br-md"
+                  }`}
+                  style={{
+                    textShadow: m.role === "assistant" 
+                      ? "0 1px 2px rgba(0,0,0,0.3)" 
+                      : "0 1px 2px rgba(0,0,0,0.1)"
+                  }}
                 >
                   {m.content}
                 </div>
               </div>
             ))}
             {loading && (
-              <div className="text-sm text-slate-600">{translations[language].typing}</div>
+              <div className="flex gap-3 items-start">
+                <div className="h-8 w-8 rounded-full flex items-center justify-center overflow-hidden">
+                  <img 
+                    src="/icon.png" 
+                    alt="CampusSathi" 
+                    className="h-6 w-6 object-contain"
+                  />
+                </div>
+                <div className="bg-blue-500/90 text-white rounded-2xl px-4 py-3 shadow-lg backdrop-blur-sm ml-8 rounded-bl-md">
+                  <div className="flex items-center space-x-1">
+                    <span className="text-sm" style={{textShadow: "0 1px 2px rgba(0,0,0,0.3)"}}>
+                      {translations[language].typing}
+                    </span>
+                    <div className="flex space-x-1">
+                      <div className="w-1 h-1 bg-white/80 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                      <div className="w-1 h-1 bg-white/80 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                      <div className="w-1 h-1 bg-white/80 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
 
-          <div className="mt-4 flex items-center gap-2">
+          <div className="mt-4 flex items-center gap-2 relative z-10">
             <input
-              className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="flex-1 rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white/95 backdrop-blur-sm shadow-lg"
               placeholder={translations[language].inputPlaceholder}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
+              style={{textShadow: "0 1px 2px rgba(0,0,0,0.1)"}}
             />
             <button
               onClick={send}
               disabled={loading}
-              className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+              className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white px-6 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-300 shadow-lg backdrop-blur-sm font-medium transition-all duration-200 hover:scale-105"
+              style={{textShadow: "0 1px 2px rgba(0,0,0,0.3)"}}
             >
               {translations[language].send}
             </button>
           </div>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2 relative z-10">
             {translations[language].quickAsks.map(
               (a: string) => (
                 <button
                   key={a}
                   onClick={() => quickAsk(a)}
-                  className="text-sm bg-orange-100 text-orange-800 hover:bg-orange-200 rounded-full px-3 py-1 focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="text-sm bg-orange-100/90 text-orange-800 hover:bg-orange-200 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300 shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-105"
+                  style={{textShadow: "0 1px 2px rgba(0,0,0,0.1)"}}
                 >
                   {a}
                 </button>
@@ -290,13 +378,49 @@ export default function Home() {
       </main>
 
       <aside className="p-4 bg-slate-50 space-y-3">
-        <div className="bg-[#0b3c66] text-white rounded-xl p-4 h-32 flex items-center justify-center">
-          <span className="opacity-95">{translations[language].hero}</span>
+        {/* Hero Graphic with State Logo */}
+        <div className="bg-[#0b3c66] text-white rounded-xl p-4 h-40 flex flex-col items-center justify-center relative overflow-hidden">
+          <img 
+            src="/state-logo.png" 
+            alt="State Logo" 
+            className="h-16 w-16 object-contain mb-2 opacity-90" 
+          />
+          <span className="opacity-95 text-sm font-medium">{translations[language].hero}</span>
         </div>
-        <div className="bg-[#0b3c66] text-white rounded-xl p-4">
-          <div className="text-sm opacity-95">{translations[language].latestTitle}</div>
-          <div className="mt-2 text-sm text-white">{translations[language].latestItem}</div>
-          <button className="mt-3 bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+        
+        {/* Animated Latest Updates */}
+        <div className="bg-[#0b3c66] text-white rounded-xl p-4 relative overflow-hidden">
+          <div className="text-sm opacity-95 mb-3 flex items-center gap-2">
+            <span className="animate-pulse">🔔</span>
+            {translations[language].latestTitle}
+          </div>
+          <div className="transition-all duration-500 ease-in-out">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-2xl">{latestUpdates[currentUpdateIndex].icon}</span>
+              <div className="flex-1">
+                <div className="text-sm font-medium text-white">
+                  {latestUpdates[currentUpdateIndex].title}
+                </div>
+                <div className="text-xs text-gray-300 mt-1">
+                  {latestUpdates[currentUpdateIndex].description}
+                </div>
+              </div>
+            </div>
+            {/* Progress indicator */}
+            <div className="flex space-x-1 mt-3">
+              {latestUpdates.map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                    index === currentUpdateIndex 
+                      ? 'bg-orange-400' 
+                      : 'bg-white/30'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          <button className="mt-3 bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-orange-300 transition-all duration-200 hover:scale-105">
             {translations[language].readMore}
           </button>
         </div>
